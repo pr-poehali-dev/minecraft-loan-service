@@ -276,7 +276,11 @@ export default function Index() {
               <CardContent className="p-8 text-center space-y-4">
                 <h3 className="text-3xl font-black uppercase">Связаться с нами</h3>
                 <div className="flex justify-center">
-                  <Button variant="outline" className="border-2 font-bold uppercase">
+                  <Button 
+                    variant="outline" 
+                    className="border-2 font-bold uppercase"
+                    onClick={() => window.open('https://t.me/FBi_truck', '_blank')}
+                  >
                     <Icon name="Send" className="mr-2" />
                     Telegram
                   </Button>
