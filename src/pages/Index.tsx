@@ -37,9 +37,9 @@ export default function Index() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 bg-primary flex items-center justify-center text-2xl">💎</div>
-              <span className="text-2xl font-bold tracking-wider glow-red">DIAMOND CREDIT</span>
+              <span className="text-2xl font-bold tracking-wider glow-red">BLACKROCK</span>
             </div>
-            <div className="hidden md:flex gap-6">
+            <div className="flex gap-6">
               {[
                 { id: 'home', label: 'Главная', icon: 'Home' },
                 { id: 'credits', label: 'Кредиты', icon: 'Gem' },
@@ -58,9 +58,6 @@ export default function Index() {
                 </button>
               ))}
             </div>
-            <Button className="bg-primary hover:bg-primary/90 text-white font-bold uppercase tracking-wide">
-              Войти
-            </Button>
           </div>
         </div>
       </nav>
@@ -98,18 +95,7 @@ export default function Index() {
                 Как работает
               </Button>
             </div>
-            <div className="grid grid-cols-3 gap-6 max-w-2xl mx-auto mt-12">
-              {[
-                { value: '10K+', label: 'Игроков' },
-                { value: '500K', label: 'Алмазов выдано' },
-                { value: '99%', label: 'Возврат' },
-              ].map((stat) => (
-                <div key={stat.label} className="text-center">
-                  <div className="text-4xl font-black text-primary glow-red">{stat.value}</div>
-                  <div className="text-sm text-muted-foreground uppercase tracking-wide">{stat.label}</div>
-                </div>
-              ))}
-            </div>
+
           </div>
         </div>
       </section>
@@ -197,7 +183,7 @@ export default function Index() {
 
                 <div className="space-y-4">
                   <Input placeholder="Твой никнейм в Minecraft" className="text-lg p-6 border-2" />
-                  <Input placeholder="Сервер (IP или название)" className="text-lg p-6 border-2" />
+                  <Input placeholder="Твой Telegram (@username)" className="text-lg p-6 border-2" />
                   <Button className="w-full bg-primary hover:bg-primary/90 text-white text-xl py-6 font-black uppercase tracking-wide">
                     <Icon name="Rocket" className="mr-2" size={24} />
                     ОФОРМИТЬ ЗАЯВКУ
@@ -220,11 +206,11 @@ export default function Index() {
               {[
                 {
                   q: 'Как быстро получу алмазы?',
-                  a: 'Мгновенно! После одобрения заявки (обычно 5-10 минут) алмазы падают в твой инвентарь на сервере.',
+                  a: 'После оформления заявки вам напишут в Telegram, где сообщат когда алмазы будут готовы или причину отказа.',
                 },
                 {
                   q: 'Что если не смогу вернуть вовремя?',
-                  a: 'Пиши в поддержку до дедлайна — продлим срок. Просрочка = +10% к сумме за каждый день. После 7 дней просрочки — бан на сервере.',
+                  a: 'Пиши в поддержку до дедлайна — продлим срок. Просрочка = +10% к сумме за каждый день.',
                 },
                 {
                   q: 'Можно взять несколько кредитов?',
@@ -232,11 +218,7 @@ export default function Index() {
                 },
                 {
                   q: 'Как вернуть кредит?',
-                  a: 'Скидываешь алмазы в специальный сундук на спавне или переводишь админу. Всё автоматически считается и отражается в личном кабинете.',
-                },
-                {
-                  q: 'Откуда вы берёте алмазы?',
-                  a: 'У нас куча фарм-ботов и партнёрство с крупными игроками. Это виртуальный кредит, работает как банк в реальной жизни.',
+                  a: 'Отправляйся в банк на торговой зоне, сложи алмазы в сундуки и отправь скриншот о возврате долга в Telegram человеку, который писал тебе.',
                 },
               ].map((item, index) => (
                 <AccordionItem
@@ -267,19 +249,17 @@ export default function Index() {
             <Card className="bg-card border-4 border-secondary">
               <CardContent className="p-8">
                 <p className="text-lg leading-relaxed text-muted-foreground">
-                  Мы — команда хардкорных игроков, которые фармят с 2015 года. Знаем каждую механику, каждый способ
-                  быстрого заработка алмазов. Создали этот сервис, потому что устали видеть как новички месяцами
-                  копят на нормальное снаряжение. Теперь любой может взять кредит, быстро прокачаться и вернуть
-                  алмазы уже с хорошим лутом. Это честно, быстро и без скама.
+                  Мы — команда игроков сервера "Шлакоблок". Создали этот сервис, чтобы помочь новичкам быстрее
+                  прокачаться и получить доступ к нормальному снаряжению. Теперь любой может взять кредит на алмазы,
+                  развиться в игре и вернуть долг уже с хорошим лутом. Это честно, быстро и без скама.
                 </p>
               </CardContent>
             </Card>
 
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
               {[
-                { icon: '⚔️', name: 'Макс', role: 'Основатель', desc: 'PvP-король, 5000+ часов' },
-                { icon: '🛡️', name: 'Лёха', role: 'Техдир', desc: 'Код & автоматизация' },
-                { icon: '💼', name: 'Катя', role: 'Поддержка', desc: 'Решит любой вопрос' },
+                { icon: '⚔️', name: 'Fbi_Truck', role: 'Основатель', desc: 'Главный по кредитам' },
+                { icon: '🛡️', name: 'Diss_Laferro', role: 'Техдир', desc: 'Код & автоматизация' },
               ].map((member) => (
                 <Card key={member.name} className="bg-card border-2 border-border text-center hover:border-primary transition-all">
                   <CardContent className="p-6 space-y-3">
@@ -295,18 +275,10 @@ export default function Index() {
             <Card className="bg-gradient-to-r from-primary/20 to-secondary/20 border-2 border-primary">
               <CardContent className="p-8 text-center space-y-4">
                 <h3 className="text-3xl font-black uppercase">Связаться с нами</h3>
-                <div className="flex flex-wrap justify-center gap-4">
-                  <Button variant="outline" className="border-2 font-bold uppercase">
-                    <Icon name="MessageCircle" className="mr-2" />
-                    Discord
-                  </Button>
+                <div className="flex justify-center">
                   <Button variant="outline" className="border-2 font-bold uppercase">
                     <Icon name="Send" className="mr-2" />
                     Telegram
-                  </Button>
-                  <Button variant="outline" className="border-2 font-bold uppercase">
-                    <Icon name="Mail" className="mr-2" />
-                    Email
                   </Button>
                 </div>
               </CardContent>
@@ -319,10 +291,10 @@ export default function Index() {
         <div className="container mx-auto px-4 text-center space-y-4">
           <div className="flex items-center justify-center gap-2 text-2xl font-black">
             <span className="text-3xl">💎</span>
-            <span className="glow-red">DIAMOND CREDIT</span>
+            <span className="glow-red">BLACKROCK</span>
           </div>
           <p className="text-muted-foreground text-sm">
-            © 2024 Diamond Credit. Виртуальный сервис кредитов для Minecraft. Играй умнее, не медленнее.
+            © 2024 BlackRock. Виртуальный сервис кредитов для сервера "Шлакоблок". Играй умнее, не медленнее.
           </p>
         </div>
       </footer>
