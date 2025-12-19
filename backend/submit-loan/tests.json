@@ -1,0 +1,23 @@
+{
+  "tests": [
+    {
+      "name": "Submit loan application",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "minecraftNickname": "TestPlayer",
+        "telegramUsername": "@testuser",
+        "diamondAmount": 64,
+        "loanPeriod": 7,
+        "totalReturn": 74,
+        "interest": 10
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "success": true,
+        "message": "string"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}

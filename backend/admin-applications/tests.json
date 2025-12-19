@@ -1,0 +1,13 @@
+{
+  "tests": [
+    {
+      "name": "Get applications with admin password",
+      "method": "GET",
+      "path": "/",
+      "headers": {
+        "X-Admin-Password": "blackrock2024"
+      },
+      "expectedStatus": 200
+    }
+  ]
+}

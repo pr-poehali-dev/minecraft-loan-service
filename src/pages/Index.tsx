@@ -4,12 +4,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useToast } from '@/hooks/use-toast';
 import Icon from '@/components/ui/icon';
 
 export default function Index() {
   const [activeSection, setActiveSection] = useState('home');
   const [diamondAmount, setDiamondAmount] = useState(64);
   const [loanPeriod, setLoanPeriod] = useState(7);
+  const [minecraftNickname, setMinecraftNickname] = useState('');
+  const [telegramUsername, setTelegramUsername] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
+  const [adminPassword, setAdminPassword] = useState('');
+  const [applications, setApplications] = useState<any[]>([]);
+  const [isLoadingApplications, setIsLoadingApplications] = useState(false);
+  const { toast } = useToast();
 
   const calculateLoan = () => {
     const interest = 0.15;
@@ -22,6 +32,103 @@ export default function Index() {
   const scrollToSection = (section: string) => {
     setActiveSection(section);
     document.getElementById(section)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleSubmitApplication = async () => {
+    if (!minecraftNickname || !telegramUsername) {
+      toast({
+        title: 'Ошибка',
+        description: 'Заполните все поля',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch('https://functions.poehali.dev/b962861c-ec3e-4fe6-af95-0a6529ddf911', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          minecraftNickname,
+          telegramUsername,
+          diamondAmount,
+          loanPeriod,
+          totalReturn: loan.totalReturn,
+          interest: loan.interest,
+        }),
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        toast({
+          title: '✅ Заявка оформлена!',
+          description: 'Ждите ответа, вам напишут в Telegram',
+        });
+        setMinecraftNickname('');
+        setTelegramUsername('');
+      } else {
+        toast({
+          title: 'Ошибка',
+          description: data.error || 'Не удалось отправить заявку',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось отправить заявку',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleAdminLogin = async () => {
+    if (!adminPassword) {
+      toast({
+        title: 'Ошибка',
+        description: 'Введите пароль',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    setIsLoadingApplications(true);
+    try {
+      const response = await fetch('https://functions.poehali.dev/7ca27fbb-9921-46b2-86c0-4e782350bc46', {
+        method: 'GET',
+        headers: {
+          'X-Admin-Password': adminPassword,
+        },
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        setApplications(data.applications || []);
+        toast({
+          title: 'Успешно',
+          description: `Загружено ${data.applications?.length || 0} заявок`,
+        });
+      } else {
+        toast({
+          title: 'Ошибка',
+          description: data.error || 'Неверный пароль',
+          variant: 'destructive',
+        });
+      }
+    } catch (error) {
+      toast({
+        title: 'Ошибка',
+        description: 'Не удалось загрузить заявки',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoadingApplications(false);
+    }
   };
 
   return (
@@ -39,7 +146,7 @@ export default function Index() {
               <div className="w-10 h-10 bg-primary flex items-center justify-center text-2xl">💎</div>
               <span className="text-2xl font-bold tracking-wider glow-red">BLACKROCK</span>
             </div>
-            <div className="flex gap-6">
+            <div className="flex gap-6 items-center">
               {[
                 { id: 'home', label: 'Главная', icon: 'Home' },
                 { id: 'credits', label: 'Кредиты', icon: 'Gem' },
@@ -57,6 +164,15 @@ export default function Index() {
                   {item.label}
                 </button>
               ))}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowAdminPanel(true)}
+                className="ml-4 border-2 font-bold uppercase"
+              >
+                <Icon name="Lock" className="mr-2" size={16} />
+                Админ
+              </Button>
             </div>
           </div>
         </div>
@@ -182,11 +298,25 @@ export default function Index() {
                 </div>
 
                 <div className="space-y-4">
-                  <Input placeholder="Твой никнейм в Minecraft" className="text-lg p-6 border-2" />
-                  <Input placeholder="Твой Telegram (@username)" className="text-lg p-6 border-2" />
-                  <Button className="w-full bg-primary hover:bg-primary/90 text-white text-xl py-6 font-black uppercase tracking-wide">
+                  <Input 
+                    placeholder="Твой никнейм в Minecraft" 
+                    className="text-lg p-6 border-2"
+                    value={minecraftNickname}
+                    onChange={(e) => setMinecraftNickname(e.target.value)}
+                  />
+                  <Input 
+                    placeholder="Твой Telegram (@username)" 
+                    className="text-lg p-6 border-2"
+                    value={telegramUsername}
+                    onChange={(e) => setTelegramUsername(e.target.value)}
+                  />
+                  <Button 
+                    className="w-full bg-primary hover:bg-primary/90 text-white text-xl py-6 font-black uppercase tracking-wide"
+                    onClick={handleSubmitApplication}
+                    disabled={isSubmitting}
+                  >
                     <Icon name="Rocket" className="mr-2" size={24} />
-                    ОФОРМИТЬ ЗАЯВКУ
+                    {isSubmitting ? 'ОТПРАВКА...' : 'ОФОРМИТЬ ЗАЯВКУ'}
                   </Button>
                 </div>
               </CardContent>
@@ -302,6 +432,83 @@ export default function Index() {
           </p>
         </div>
       </footer>
+
+      <Dialog open={showAdminPanel} onOpenChange={setShowAdminPanel}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-black uppercase">Панель администратора</DialogTitle>
+          </DialogHeader>
+          
+          {applications.length === 0 ? (
+            <div className="space-y-4">
+              <Input
+                type="password"
+                placeholder="Введите пароль администратора"
+                value={adminPassword}
+                onChange={(e) => setAdminPassword(e.target.value)}
+                className="text-lg p-4"
+              />
+              <Button
+                onClick={handleAdminLogin}
+                disabled={isLoadingApplications}
+                className="w-full bg-primary hover:bg-primary/90 text-white font-bold uppercase"
+              >
+                {isLoadingApplications ? 'Загрузка...' : 'Войти'}
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold">Заявки: {applications.length}</h3>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setApplications([]);
+                    setAdminPassword('');
+                  }}
+                >
+                  Выйти
+                </Button>
+              </div>
+              
+              <div className="space-y-3">
+                {applications.map((app) => (
+                  <Card key={app.id} className="bg-card border-2">
+                    <CardContent className="p-4">
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <p className="text-muted-foreground">Никнейм:</p>
+                          <p className="font-bold text-lg">{app.minecraftNickname}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Telegram:</p>
+                          <p className="font-bold text-lg">{app.telegramUsername}</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Алмазов:</p>
+                          <p className="font-bold text-primary">{app.diamondAmount} 💎</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Срок:</p>
+                          <p className="font-bold">{app.loanPeriodDays} дней</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Вернуть:</p>
+                          <p className="font-bold text-accent">{app.totalReturnAmount} 💎</p>
+                        </div>
+                        <div>
+                          <p className="text-muted-foreground">Дата:</p>
+                          <p className="font-bold">{new Date(app.createdAt).toLocaleString('ru-RU')}</p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
